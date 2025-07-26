@@ -2,9 +2,11 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
+# Ensure the 'db' directory exists
 Path("db").mkdir(exist_ok=True)
 
 def init_db():
+    # Create the database and table if they don't already exist
     conn = sqlite3.connect("db/entries.db")
     c = conn.cursor()
     c.execute('''
@@ -23,6 +25,7 @@ def init_db():
     conn.close()
 
 def insert_entry(journal, intention, dream, priorities, reflection, strategy):
+    # Insert a new entry for the current date
     conn = sqlite3.connect("db/entries.db")
     c = conn.cursor()
     c.execute('''
@@ -34,6 +37,7 @@ def insert_entry(journal, intention, dream, priorities, reflection, strategy):
     conn.close()
 
 def get_entries_by_date(entry_date):
+    # Fetch all entries for a given date
     conn = sqlite3.connect("db/entries.db")
     c = conn.cursor()
     c.execute("SELECT * FROM entries WHERE date = ?", (entry_date,))
