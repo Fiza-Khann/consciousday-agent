@@ -14,8 +14,8 @@ credentials = {
             "password": "fiza123"
         },
         "demo": {
-            "name": "Demo User",
-            "password": "demo"
+            "name": "admin",
+            "password": "admin"
         }
     }
 }
