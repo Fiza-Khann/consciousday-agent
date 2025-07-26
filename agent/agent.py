@@ -44,7 +44,6 @@ def process_inputs(journal, dream, intention, priorities):
     result = llm.invoke(messages)
     content = result.content
 
-    # Use regex to extract numbered sections
     sections = re.split(r'\n?\s*\d\.\s+', content)
     labels = ["", "Inner Reflection", "Dream Interpretation", "Mindset Insight", "Suggested Day Strategy"]
 
