@@ -4,9 +4,10 @@ from db.database import init_db, insert_entry, get_entries_by_date
 from agent.agent import process_inputs
 import os
 
-# Only enable login in local development
+# Toggle login requirement based on environment (local vs deployed)
 IS_LOCAL = os.getenv("IS_LOCAL", "false").lower() == "true"
 
+# If running locally, enable authentication
 if IS_LOCAL:
     import streamlit_authenticator as stauth
 
@@ -23,6 +24,7 @@ if IS_LOCAL:
         }
     }
 
+    # Set up authentication system
     authenticator = stauth.Authenticate(
         credentials=credentials,
         cookie_name="consciousday_cookie",
@@ -32,7 +34,7 @@ if IS_LOCAL:
 
     authenticator.login(location="main")
 
-    # Handle login errors
+    # Handle incorrect login or missing credentials
     if st.session_state.get("authentication_status") is False:
         st.error("Incorrect username or password")
         st.stop()
@@ -40,23 +42,27 @@ if IS_LOCAL:
         st.warning("Please enter your username and password")
         st.stop()
 
-# Main app
+# Start the app UI
 st.set_page_config(page_title="ConsciousDay Agent", layout="centered")
 
+# If in local mode, show sidebar with logout and greeting
 if IS_LOCAL:
     with st.sidebar:
         authenticator.logout(location="main", button_name="Logout")
         st.write(f"Welcome, *{st.session_state['name']}*")
 
+# Set up the SQLite database
 init_db()
 
 st.title("ConsciousDay Agent")
 st.header("Morning Reflection Form")
 
+# Button to reset all session inputs
 if st.button("Reset Reflection"):
     st.session_state.clear()
     st.rerun()
 
+# Collect user's morning thoughts and plans
 with st.form("morning_form"):
     journal = st.text_area("Morning Journal", height=150, placeholder="How are you feeling today?")
     dream = st.text_area("Dream", height=100, placeholder="Any dreams you remember?")
@@ -64,6 +70,7 @@ with st.form("morning_form"):
     priorities = st.text_input("Top 3 Priorities (comma-separated)", placeholder="E.g. Focus, Hydrate, Workout")
     submitted = st.form_submit_button("Generate Reflection")
 
+# When user submits the form, generate a new reflection and store it
 if submitted:
     if (
         "reflection_result" not in st.session_state or
@@ -84,6 +91,7 @@ if submitted:
     else:
         reflection, strategy = st.session_state.reflection_result
 
+    # Display the reflection and suggested day plan
     st.success("Your Reflection & Strategy")
     st.subheader("Reflection Summary")
     parts = reflection.split("###")
@@ -98,6 +106,7 @@ if submitted:
     st.subheader("Suggested Day Strategy")
     st.markdown(strategy)
 
+# Section to view saved reflections by date
 st.subheader("View Past Entry")
 selected_date = st.date_input("Pick a date", value=date.today())
 
