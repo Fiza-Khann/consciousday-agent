@@ -11,8 +11,8 @@ credentials = {
             "password": "fiza123"
         },
         "demo": {
-            "name": "admin",
-            "password": "admin"
+            "name": "Demo User",
+            "password": "demo"
         }
     }
 }
@@ -23,6 +23,8 @@ authenticator = stauth.Authenticate(
     key="secret_key_123",
     cookie_expiry_days=1
 )
+
+authenticator.login(location="main")
 
 if st.session_state["authentication_status"]:
     st.set_page_config(page_title="ConsciousDay Agent", layout="centered")
@@ -120,7 +122,7 @@ if st.session_state["authentication_status"]:
                 st.markdown("---")
         else:
             st.warning(f"No entry found for {selected_date}. Try creating an entry for today first.")
-            
+
 elif st.session_state["authentication_status"] is False:
     st.error("❌ Incorrect username or password")
 elif st.session_state["authentication_status"] is None:
